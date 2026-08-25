@@ -10,3 +10,5 @@ talentsphere.db
 AI_Report.pdf
 .vscode/
 assets/certificates/
+
+utils/admin_db.py
