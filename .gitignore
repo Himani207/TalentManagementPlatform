@@ -1,0 +1,12 @@
+﻿node_modules/
+.env
+.env.*
+*.log
+__pycache__/
+*.pyc
+.streamlit/secrets.toml
+talentsphere.db
+
+AI_Report.pdf
+.vscode/
+assets/certificates/
