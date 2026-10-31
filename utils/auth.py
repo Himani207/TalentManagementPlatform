@@ -18,6 +18,32 @@ def verify_password(password, hashed):
         password.encode(),
         hashed.encode()
     )
+# -------------------------
+# Update Existing Password
+# -------------------------
+
+def update_password(email, new_password):
+    conn = sqlite3.connect("talentsphere.db")
+    cursor = conn.cursor()
+
+    hashed_password = hash_password(new_password)
+
+    cursor.execute(
+        """
+        UPDATE users
+        SET password=?
+        WHERE email=?
+        """,
+        (hashed_password, email)
+    )
+
+    conn.commit()
+
+    updated = cursor.rowcount > 0
+
+    conn.close()
+
+    return updated
 
 
 # -------------------------

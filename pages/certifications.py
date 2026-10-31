@@ -113,7 +113,7 @@ unsafe_allow_html=True)
 # HEADER
 # ==========================================================
 
-st.title("📜 Recommended Certifications")
+st.title(" Recommended Certifications")
 
 st.caption(
     "Personalized certification recommendations based on your professional profile."
@@ -213,7 +213,7 @@ st.caption(
 # CERTIFICATION SECTION STARTS HERE
 # ==========================================================
 st.divider()
-st.subheader("🎯 Recommended Certifications")
+st.subheader("Recommended Certifications")
 # ==========================================================
 # DYNAMIC CERTIFICATION CARDS
 # ==========================================================
@@ -343,7 +343,7 @@ st.divider()
 # DYNAMIC LEARNING STRATEGY
 # ==========================================================
 
-st.subheader("🚀 Personalized Certification Roadmap")
+st.subheader("Personalized Certification Roadmap")
 
 roadmap = []
 
@@ -387,7 +387,7 @@ for step in roadmap:
 
 st.divider()
 
-st.subheader("📅 Suggested Learning Timeline")
+st.subheader("Suggested Learning Timeline")
 
 timeline = []
 
@@ -408,7 +408,7 @@ if timeline:
 
 st.divider()
 
-st.subheader("🎯 Recommended Next Steps")
+st.subheader("Recommended Next Steps")
 
 next_steps = []
 
@@ -469,7 +469,7 @@ for step in next_steps:
 
 st.divider()
 
-st.subheader("💡 Career Tip")
+st.subheader("Career Tip")
 
 if experience < 2:
 
@@ -495,7 +495,7 @@ else:
 
 st.divider()
 
-st.subheader("⚡ Quick Actions")
+st.subheader("Quick Actions")
 
 c1, c2, c3 = st.columns(3)
 
@@ -513,7 +513,7 @@ with c1:
 with c2:
 
     if st.button(
-        "📊 Career Analytics",
+        "Career Analytics",
         use_container_width=True
     ):
 
@@ -524,7 +524,7 @@ with c2:
 with c3:
 
     if st.button(
-        "🤖 AI Career Coach",
+        " AI Career Coach",
         use_container_width=True
     ):
 
@@ -539,5 +539,5 @@ with c3:
 st.divider()
 
 st.caption(
-    "TalentSphere Elevate • AI Powered Professional Growth Platform 🚀"
+    "TalentSphere Elevate • AI Powered Professional Growth Platform "
 )

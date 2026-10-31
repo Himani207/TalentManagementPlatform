@@ -40,6 +40,31 @@ st.markdown("""
 
 profile = professional_sidebar()
 # ==========================================================
+# ENSURE PROFILE HAS ALL REQUIRED FIELDS
+# ==========================================================
+
+profile = profile or {}
+
+profile.setdefault("technical_skills", "")
+profile.setdefault("preferred_role", "")
+profile.setdefault("experience", 0)
+profile.setdefault("leadership", 0)
+
+profile.setdefault("full_name", "Professional")
+profile.setdefault("phone", "")
+profile.setdefault("location", "")
+profile.setdefault("company", "")
+profile.setdefault("current_role", "")
+profile.setdefault("soft_skills", "")
+profile.setdefault("work_experience", "")
+profile.setdefault("achievements", "")
+profile.setdefault("certifications", "")
+profile.setdefault("career_goal", "")
+profile.setdefault("current_salary", 0)
+profile.setdefault("linkedin", "")
+profile.setdefault("github", "")
+profile.setdefault("resume_score", 0)
+# ==========================================================
 # CUSTOM CSS
 # ==========================================================
 

@@ -2,7 +2,7 @@ import streamlit as st
 from ai.career_ai import recommend_career
 st.set_page_config(page_title="AI Career Recommendation")
 
-st.title("🎯 AI Career Recommendation")
+st.title(" AI Career Recommendation")
 
 category = st.selectbox(
     "Category",

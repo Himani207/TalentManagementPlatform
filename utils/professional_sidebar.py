@@ -25,13 +25,26 @@ def professional_sidebar():
     # If profile doesn't exist yet,
     # create an empty profile dictionary.
     if profile is None:
-
         profile = {
             "email": email,
             "full_name": "Professional",
+            "phone": "",
+            "location": "",
             "company": "",
             "current_role": "",
-            "location": ""
+            "experience": 0,
+            "technical_skills": "",
+            "soft_skills": "",
+            "leadership": 0,
+            "work_experience": "",
+            "achievements": "",
+            "certifications": "",
+            "career_goal": "",
+            "preferred_role": "",
+            "current_salary": 0,
+            "linkedin": "",
+            "github": "",
+            "resume_score": 0
         }
 
     # ==========================================================
@@ -40,7 +53,7 @@ def professional_sidebar():
 
     with st.sidebar:
 
-        st.title("💼 TalentSphere Elevate")
+        st.title("💼 Talent Management Platform")
         st.caption("Working Professional Portal")
 
         st.divider()
@@ -53,12 +66,12 @@ def professional_sidebar():
 
         st.page_link(
             "pages/professional.py",
-            label="🏠 Dashboard"
+            label="Dashboard"
         )
 
         st.page_link(
             "pages/professional_profile.py",
-            label="👤 My Profile"
+            label="My Profile"
         )
 
         st.page_link(
@@ -68,12 +81,12 @@ def professional_sidebar():
 
         st.page_link(
             "pages/resume_analyzer.py",
-            label="📄 Resume Analyzer"
+            label="Resume Analyzer"
         )
 
         st.page_link(
             "pages/career_analytics.py",
-            label="📊 Career Analytics"
+            label="Career Analytics"
         )
         st.page_link(
             "pages/salary_insights.py",
@@ -82,38 +95,38 @@ def professional_sidebar():
         )
         st.page_link(
             "pages/interview_preparation.py",
-            label="🎯 Interview Preparation"
+            label="Interview Preparation"
         )
 
         st.page_link(
             "pages/professional_job_matching.py",
-            label="💼 AI Career Opportunity Matcher"
-        )
-        st.page_link(
-            "pages/my_applications.py",
-            label="📋 My Applications"
+            label="AI Career Opportunity Matcher"
         )
         st.page_link(
             "pages/ai_career_coach.py",
-            label="🤖 AI Career Coach"
+            label="AI Career Coach"
+        )
+        st.page_link(
+            "pages/ai_career_coach.py",
+            label="AI Career Coach"
         )
         st.page_link(
             "pages/promotion_readiness.py",
-            label="🚀 Promotion Readiness"
+            label="Promotion Readiness"
         )
         st.page_link(
             "pages/industry_trends.py",
-            label="📈 Industry Trends"
+            label="Industry Trends"
         )
 
         st.page_link(
             "pages/certifications.py",
-            label="🏆 Certifications"
+            label="Certifications"
         )
 
         st.divider()
 
-        if st.button("🚪 Logout", use_container_width=True):
+        if st.button("Logout", use_container_width=True):
             logout()
             st.switch_page("app.py")
 

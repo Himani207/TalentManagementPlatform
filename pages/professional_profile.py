@@ -1,7 +1,6 @@
 import streamlit as st
 from utils.professional_sidebar import professional_sidebar
 from utils.professional_theme import load_professional_theme
-from utils.professional_db import get_profile
 # ==========================================================
 # PAGE CONFIG
 # ==========================================================
@@ -16,12 +15,29 @@ load_professional_theme()
 # LOAD SIDEBAR & PROFILE
 # ==========================================================
 profile = professional_sidebar()
-
-if profile:
-    profile = get_profile(profile["email"])
-else:
-    st.warning("Profile not found")
+# Make sure profile is always a dictionary
+if profile is None:
+    st.warning("Profile not found. Please create your professional profile.")
     st.stop()
+
+# Make sure all required fields exist
+profile.setdefault("email", st.session_state.get("email", ""))
+profile.setdefault("full_name", "Professional")
+profile.setdefault("phone", "")
+profile.setdefault("location", "")
+profile.setdefault("company", "")
+profile.setdefault("current_role", "")
+profile.setdefault("experience", 0)
+profile.setdefault("technical_skills", "")
+profile.setdefault("soft_skills", "")
+profile.setdefault("career_goal", "")
+profile.setdefault("preferred_role", "")
+profile.setdefault("leadership", 0)
+profile.setdefault("work_experience", "")
+profile.setdefault("achievements", "")
+profile.setdefault("certifications", "")
+profile.setdefault("linkedin", "")
+profile.setdefault("github", "")
 # ==========================================================
 # PROFILE COMPLETION
 # ==========================================================

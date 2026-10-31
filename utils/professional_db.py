@@ -48,19 +48,55 @@ def create_table():
 
     conn.commit()
     conn.close()
+def migrate_professional_profile():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("PRAGMA table_info(professional_profile)")
+    columns = {row[1] for row in cursor.fetchall()}
+
+    columns_to_add = {
+        "phone": "TEXT",
+        "location": "TEXT",
+        "company": "TEXT",
+        "current_role": "TEXT",
+        "experience": "INTEGER DEFAULT 0",
+        "technical_skills": "TEXT",
+        "soft_skills": "TEXT",
+        "leadership": "INTEGER DEFAULT 0",
+        "work_experience": "TEXT",
+        "achievements": "TEXT",
+        "certifications": "TEXT",
+        "career_goal": "TEXT",
+        "preferred_role": "TEXT",
+        "current_salary": "INTEGER DEFAULT 0",
+        "linkedin": "TEXT",
+        "github": "TEXT"
+    }
+
+    for column, column_type in columns_to_add.items():
+
+        if column not in columns:
+            cursor.execute(
+                f"ALTER TABLE professional_profile "
+                f"ADD COLUMN {column} {column_type}"
+            )
+
+    conn.commit()
+    conn.close()
 # ==========================================================
 # SAVE PROFESSIONAL PROFILE
 # ==========================================================
-
 def save_profile(data):
 
-    conn = get_connection()
+    # Make sure database structure is updated
+    migrate_professional_profile()
 
+    conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute(
-        """
-        INSERT INTO professional_profile(
+    cursor.execute("""
+        INSERT OR REPLACE INTO professional_profile(
             email,
             full_name,
             phone,
@@ -79,48 +115,41 @@ def save_profile(data):
             current_salary,
             linkedin,
             github
-
         )
-
-        VALUES(
-            ?,?,?,?,?,?,?,?,?,?,
-            ?,?,?,?,?,?,?,?
+        VALUES (
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+            ?, ?, ?, ?, ?, ?, ?, ?
         )
-        """,
-        (
-            data["email"],
-            data.get("full_name", ""),
-            data.get("phone", ""),
-            data.get("location", ""),
-            data.get("company", ""),
-            data.get("current_role", ""),
-            int(data.get("experience", 0)),
-            data.get("technical_skills", ""),
-            data.get("soft_skills", ""),
-            int(data.get("leadership", 0)),
-            data.get("work_experience", ""),
-            data.get("achievements", ""),
-            data.get("certifications", ""),
-            data.get("career_goal", ""),
-            data.get("preferred_role", ""),
-            int(data.get("current_salary", 0)),
-            data.get("linkedin", ""),
-            data.get("github", "")
-        )
-    )
+    """, (
+        data.get("email", ""),
+        data.get("full_name", ""),
+        data.get("phone", ""),
+        data.get("location", ""),
+        data.get("company", ""),
+        data.get("current_role", ""),
+        int(data.get("experience", 0) or 0),
+        data.get("technical_skills", ""),
+        data.get("soft_skills", ""),
+        int(data.get("leadership", 0) or 0),
+        data.get("work_experience", ""),
+        data.get("achievements", ""),
+        data.get("certifications", ""),
+        data.get("career_goal", ""),
+        data.get("preferred_role", ""),
+        int(data.get("current_salary", 0) or 0),
+        data.get("linkedin", ""),
+        data.get("github", "")
+    ))
 
     conn.commit()
     conn.close()
 # ==========================================================
 # GET PROFESSIONAL PROFILE
 # ==========================================================
-
 def get_profile(email):
 
     conn = get_connection()
-
     cursor = conn.cursor()
-
 
     cursor.execute(
         """
@@ -131,11 +160,40 @@ def get_profile(email):
         (email,)
     )
 
-
     row = cursor.fetchone()
+
     conn.close()
+
     if row:
+
         profile = dict(row)
+
+        # Make sure all expected fields exist
+        defaults = {
+            "full_name": "",
+            "phone": "",
+            "location": "",
+            "company": "",
+            "current_role": "",
+            "experience": 0,
+            "technical_skills": "",
+            "soft_skills": "",
+            "leadership": 0,
+            "work_experience": "",
+            "achievements": "",
+            "certifications": "",
+            "career_goal": "",
+            "preferred_role": "",
+            "current_salary": 0,
+            "linkedin": "",
+            "github": "",
+            "resume_score": 0
+        }
+
+        for key, default in defaults.items():
+            profile.setdefault(key, default)
+
+        # Clean text values
         text_fields = [
             "full_name",
             "phone",
@@ -150,15 +208,31 @@ def get_profile(email):
             "career_goal",
             "preferred_role",
             "linkedin",
-            "github",
-            
+            "github"
         ]
+
         for field in text_fields:
             profile[field] = profile.get(field) or ""
+
+        # Convert numeric values
+        profile["experience"] = int(
+            profile.get("experience") or 0
+        )
+
+        profile["leadership"] = int(
+            profile.get("leadership") or 0
+        )
+
         profile["current_salary"] = int(
             profile.get("current_salary") or 0
         )
+
+        profile["resume_score"] = int(
+            profile.get("resume_score") or 0
+        )
+
         return profile
+
     return None
 # ==========================================================
 # UPDATE PROFESSIONAL PROFILE
@@ -421,6 +495,7 @@ def get_experience_level(profile):
 # ==========================================================
 # JOB MATCHING
 # ==========================================================
+
 def get_job_matches(profile):
 
     jobs = [
@@ -472,68 +547,92 @@ def get_job_matches(profile):
 
     ]
 
+    # ======================================================
+    # GET USER DATA SAFELY
+    # ======================================================
+
+    technical_skills = profile.get("technical_skills", "") or ""
 
     user_skills = [
         skill.strip().lower()
-        for skill in profile["technical_skills"].split(",")
+        for skill in technical_skills.split(",")
+        if skill.strip()
     ]
 
+    user_role = (
+        profile.get("preferred_role", "") or ""
+    ).lower()
 
-    user_role = profile["preferred_role"].lower()
+    experience = int(
+        profile.get("experience", 0) or 0
+    )
 
+    # ======================================================
+    # CALCULATE MATCH
+    # ======================================================
 
     for job in jobs:
 
         required_skills = [
-            skill.lower()
+            skill.strip().lower()
             for skill in job["skills"]
         ]
 
-
+        # --------------------------------------------------
         # Skill matching
+        # --------------------------------------------------
+
         matched_skills = len(
-            set(user_skills)
-            &
+            set(user_skills) &
             set(required_skills)
         )
-
 
         skill_score = (
             matched_skills /
             len(required_skills)
         ) * 70
 
-
+        # --------------------------------------------------
         # Role matching
+        # --------------------------------------------------
+
         role_score = 0
 
         if (
-            "software" in user_role
+            user_role
             and
-            "developer" in job["role"].lower()
+            any(
+                word in job["role"].lower()
+                for word in user_role.split()
+            )
         ):
             role_score = 20
 
-
+        # --------------------------------------------------
         # Experience matching
+        # --------------------------------------------------
+
         experience_score = 0
 
-        if profile["experience"] >= job["experience"]:
+        if experience >= job["experience"]:
             experience_score = 10
 
+        # --------------------------------------------------
+        # Final match score
+        # --------------------------------------------------
 
-        job["match"] = int(
-            skill_score
-            +
-            role_score
-            +
-            experience_score
+        job["match"] = min(
+            int(
+                skill_score +
+                role_score +
+                experience_score
+            ),
+            100
         )
-
 
     return sorted(
         jobs,
-        key=lambda x:x["match"],
+        key=lambda x: x["match"],
         reverse=True
     )
 # ==========================================================
@@ -1159,6 +1258,7 @@ def create_job_tables():
         job_id TEXT,
         role TEXT,
         company TEXT,
+        location TEXT,
         status TEXT
     )
     """)
@@ -1256,4 +1356,5 @@ def get_total_job_matches():
 
     return count
 create_table()
+migrate_professional_profile()
 create_job_tables()

@@ -1,4 +1,5 @@
 import streamlit as st
+import re
 from utils.auth import login_user
 from utils.session import create_session
 
@@ -7,7 +8,7 @@ from utils.session import create_session
 # ==========================================================
 
 st.set_page_config(
-    page_title="Talent Management Platform",
+    page_title="Talent Management Platform ",
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -123,7 +124,7 @@ with left:
                 
 <div class="hero-title">
 
-Empowering Every Career Journey with AI
+Empowering Employee Performance and Career Growth
 
 </div>
 """, unsafe_allow_html=True)
@@ -181,27 +182,27 @@ learning roadmaps.
 
     with f1:
 
-        st.success("🎯 AI Career Recommendation")
+        st.success("AI Career Recommendation")
 
-        st.success("📄 ATS Resume Analyzer")
+        st.success("ATS Resume Analyzer")
 
-        st.success("💻 Coding Practice")
+        st.success("Coding Practice")
 
-        st.success("🎤 Interview Preparation")
+        st.success("Interview Preparation")
 
-        st.success("📊 Progress Dashboard")
+        st.success("Progress Dashboard")
 
     with f2:
 
-        st.info("🧠 Skill Gap Analysis")
+        st.info("Skill Gap Analysis")
 
-        st.info("🗺 Learning Roadmap")
+        st.info("Learning Roadmap")
 
-        st.info("🤖 AI Career Coach")
+        st.info("AI Career Coach")
 
-        st.info("📚 Course Suggestions")
+        st.info("Course Suggestions")
 
-        st.info("🏆 Placement Preparation")
+        st.info("Placement Preparation")
 
 # ==========================================================
 # RIGHT SIDE
@@ -283,51 +284,99 @@ Sign in to continue your career journey.
         # --------------------------------------------------
         # LOGIN
         # --------------------------------------------------
-
         if login:
+            email = email.strip()
+            # Email rule
+            email_pattern = (
+                r"^[a-zA-Z0-9._%+-]+"
+                r"@[a-zA-Z0-9.-]+"
+                r"\.[a-zA-Z]{2,}$"
+            )
 
-            if email.strip() == "" or password.strip() == "":
+            # Password rule
+            password_pattern = (
+                r"^(?=.*[a-z])"
+                r"(?=.*[A-Z])"
+                r"(?=.*\d)"
+                r"(?=.*[@$!%*?&])"
+                r".{8,}$"
+            )
 
-                st.warning("Please enter your email and password.")
+            # Empty fields
+            if email == "" or password == "":
+                st.warning("⚠️ Please enter your email and password.")
 
+            # Email validation
+            elif not re.match(email_pattern, email):
+                st.error("❌ Please enter a valid email address.")
+
+            # Password validation
+            elif not re.match(password_pattern, password):
+                st.error(
+                    "❌ Password must contain:\n\n"
+                    "• At least 8 characters\n"
+                    "• One uppercase letter (A-Z)\n"
+                    "• One lowercase letter (a-z)\n"
+                    "• One number (0-9)\n"
+                    "• One special character (@ $ ! % * ? &)"
+                )
+
+            # Login
             else:
 
-                user = login_user(email.strip(), password)
+                user = login_user(email, password)
 
                 if user:
+
                     db_role = user["role"].strip()
+
                     if db_role != role:
+
                         st.error(
                             f"This account is registered as {db_role}"
                         )
+
                     else:
-                      create_session(
-                          user["name"],
-                          user["email"],
-                          db_role
-                        )
-                      st.success(
-                           f"Welcome {user['name']} 👋"
+
+                        create_session(
+                            user["name"],
+                            user["email"],
+                            db_role
                         )
 
-                    st.success(f"Welcome {user['name']} 👋")
+                        st.success(
+                            f"Welcome {user['name']} 👋"
+                        )
 
-                    role = user["role"].strip()
+                        if db_role == "High School Student":
 
-                    if role == "High School Student":
-                        st.switch_page("pages/school.py")
+                            st.switch_page(
+                                "pages/school.py"
+                            )
 
-                    elif role == "College Student":
-                        st.switch_page("pages/college.py")
+                        elif db_role == "College Student":
 
-                    elif role == "Working Professional":
-                        st.switch_page("pages/professional.py")
-                    else:
-                        st.error(f"Unknown role: {role}")
+                            st.switch_page(
+                                "pages/college.py"
+                            )
+
+                        elif db_role == "Working Professional":
+
+                            st.switch_page(
+                                "pages/professional.py"
+                            )
+
+                        else:
+
+                            st.error(
+                                f"Unknown role: {db_role}"
+                            )
 
                 else:
 
-                    st.error("❌ Invalid Email or Password")
+                    st.error(
+                        "❌ Invalid Email or Password"
+                    )
 # ==========================================================
 # FEATURE SECTION
 # ==========================================================
@@ -346,7 +395,7 @@ col1, col2 = st.columns(2)
 with col1:
     st.markdown("""
     <div class="feature-card">
-        <h3>🎯 Career Recommendation</h3>
+        <h3>Career Recommendation</h3>
         <p>
         Discover career paths that match your skills, interests, and aspirations
         through AI-powered recommendations.
@@ -356,7 +405,7 @@ with col1:
 
     st.markdown("""
     <div class="feature-card">
-        <h3>🧠 Skill Gap Analysis</h3>
+        <h3>Skill Gap Analysis</h3>
         <p>
         Identify missing technical and soft skills required to achieve your
         dream career and receive personalized learning suggestions.
@@ -369,51 +418,19 @@ with col2:
                 
                 <div class="feature-card">
 
-               <h3>📄 Resume Analyzer</h3>
+               <h3>Resume Analyzer</h3>
                <p>Improve your ATS score with AI-powered resume analysis and actionable recommendations.</p>
                 </div>""", unsafe_allow_html=True)
 
     st.markdown("""
     <div class="feature-card">
-        <h3>🤖 AI Career Coach</h3>
+        <h3>AI Career Coach</h3>
         <p>
         Get instant career guidance, interview preparation tips, and learning
         recommendations anytime.
         </p>
     </div>
     """, unsafe_allow_html=True)
-
-# ==========================================================
-# PLATFORM MODULES
-# ==========================================================
-
-st.write("")
-st.write("")
-
-st.markdown(
-    "<h2 style='text-align:center;margin-bottom:30px;'>🚀 Platform Modules</h2>",
-    unsafe_allow_html=True
-)
-
-col1, col2, col3, col4, col5 = st.columns(5)
-
-modules = [
-    ("🎓", "School"),
-    ("🏫", "College"),
-    ("💼", "Professional"),
-]
-
-columns = [col1, col2, col3, col4, col5]
-
-for col, (icon, title) in zip(columns, modules):
-    with col:
-        st.markdown(f"""
-                    
-        <div class="module-card">
-            <div class="module-icon">{icon}</div>
-            <div class="module-title">{title}</div>
-        </div>
-        """, unsafe_allow_html=True)
 # ==========================================================
 # FOOTER
 # ==========================================================
