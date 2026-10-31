@@ -1,14 +1,33 @@
-﻿node_modules/
+﻿# Node.js dependencies
+node_modules/
+
+# Environment variables and secrets
 .env
 .env.*
-*.log
-__pycache__/
-*.pyc
+!.env.example
 .streamlit/secrets.toml
-talentsphere.db
 
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Log files
+*.log
+
+# Local database
+talentsphere.db
+*.db-journal
+*.sqlite-wal
+*.sqlite-shm
+
+# Generated reports
 AI_Report.pdf
+
+# IDE settings
 .vscode/
+
+# Private certificates
 assets/certificates/
 
+# Sensitive admin database configuration
 utils/admin_db.py
