@@ -227,9 +227,25 @@ def create_tables():
 # =====================================================
 # Initialize Database
 # =====================================================
+def initialize_database():
+    create_tables()
+
+    from utils.placement_db import create_placement_table
+    create_placement_table()
+
+    from utils.coding_db import (
+        create_coding_tables,
+        create_saved_code_table,
+        insert_questions
+    )
+
+    create_coding_tables()
+    create_saved_code_table()
+    insert_questions()
+
 
 if __name__ == "__main__":
-    create_tables()
+    initialize_database()
     print("✅ TalentSphere Database Created Successfully")
     # =====================================================
 # REGISTER USER
